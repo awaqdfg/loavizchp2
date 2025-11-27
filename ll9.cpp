@@ -8,13 +8,13 @@
 
 using namespace std;
 
-void BFS(int** G, int numG, int* visited, int s) {
+void BFSD(int** G, int numG, int* dist, int s) {
     queue<int> q;
     int v;
 
-    visited[s] = 1;
 
     q.push(s);
+    dist[s] = 0;
 
     while (!q.empty()) {
         v = q.front();
@@ -22,11 +22,15 @@ void BFS(int** G, int numG, int* visited, int s) {
         printf("%3d", v);
 
         for (int i = 0; i < numG; i++) {
-            if (G[v][i] == 1 && visited[i] == 0) {
+            if (G[v][i] == 1 && dist[i] == -1) {
                 q.push(i);
-                visited[i] = 1;
+                dist[i] = dist[v] + 1;
             }
         }
+    }
+    printf("\n\nDistance from %d to: ", s);
+    for (int i = 0; i < numG; i++) {
+        printf("\n%3d : %3d", i, dist[i]);
     }
 }
 
@@ -34,13 +38,13 @@ int main() {
     setlocale(LC_ALL, "Russian");
 
     int** G;
-    int* visited;
+    int* dist;
     int numG, current;
 
     printf("input number of verts: ");
     scanf("%d", &numG);
 
-    visited = (int*)malloc(numG * sizeof(int));
+    dist = (int*)malloc(numG * sizeof(int));
     G = (int**)malloc(numG * sizeof(int*));
 
     for (int i = 0; i < numG; i++) {
@@ -48,7 +52,7 @@ int main() {
     }
 
     for (int i = 0; i < numG; i++) {
-        visited[i] = 0;
+        dist[i] = -1;
 
         for (int j = i; j < numG; j++) {
             G[i][j] = G[j][i] = (i == j ? 0 : rand() % 2);
@@ -68,7 +72,7 @@ int main() {
 
     printf("\nPath: ");
 
-    BFS(G, numG, visited, current);
+    BFSD(G, numG, dist, current);
     printf("\n\n");
 
     for (int i = 0; i < numG; i++) {
@@ -76,7 +80,7 @@ int main() {
     }
 
     free(G);
-    free(visited);
+    free(dist);
 
     _getch();
     return 0;
